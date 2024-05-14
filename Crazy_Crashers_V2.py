@@ -1,5 +1,3 @@
-"""Crazy Crashers game V1. Setting up game basis"""
-
 import pygame
 import random
 import os
@@ -35,7 +33,9 @@ def load_images(folder_path):
 
 
 # Load all game assets
-road_image = pygame.image.load(os.path.join("assets", "road.png")) \
+road_image1 = pygame.image.load(os.path.join("assets", "road.png")) \
+    .convert_alpha()
+road_image2 = pygame.image.load(os.path.join("assets", "road.png")) \
     .convert_alpha()
 assets_path_cars = os.path.join("assets", "cars")
 car_images = load_images(assets_path_cars)
@@ -44,27 +44,55 @@ bike_images = load_images(assets_path_bikes)
 assets_path_trucks = os.path.join("assets", "trucks")
 truck_images = load_images(assets_path_trucks)
 
-# Fill the screen with white color
-SCREEN.fill((255, 255, 255))  # White color in RGB format
-
 # Stretch the road image to fit the screen
-road_stretched = pygame.transform.scale(road_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+road_stretched1 = pygame.transform.scale(road_image1, (SCREEN_WIDTH, SCREEN_HEIGHT))
+road_stretched2 = pygame.transform.scale(road_image2, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-# Blit the stretched road image onto the screen
-SCREEN.blit(road_stretched, (0, 0))
+# Define variables for background positions
+background_pos1 = 0
+background_pos2 = -SCREEN_HEIGHT  # Start the second image offscreen
+
 # Choose a random car image from the dictionary
 random_car_name = random.choice(list(car_images.keys()))
-SCREEN.blit(car_images[random_car_name], (0, 0))
+scroll_timer = 0
+scroll_speed = 1
 
-
-# Update the display to show the changes
-pygame.display.flip()
-# Keep the window open until closed by the user
+# Main game loop
+clock = pygame.time.Clock()
 running = True
 while running:
+    # Update background positions
+    background_pos1 += scroll_speed  # Adjust for desired scrolling speed
+    background_pos2 += scroll_speed
+    scroll_timer += 1
+
+    # Check if the first image needs to reset
+    if background_pos1 >= SCREEN_HEIGHT:
+        background_pos1 = -SCREEN_HEIGHT
+
+    # Check if the second image needs to reset
+    if background_pos2 >= SCREEN_HEIGHT:
+        background_pos2 = -SCREEN_HEIGHT
+
+    # Increase scroll speed every 100 points
+    if scroll_timer % 1000 == 0:
+        scroll_speed += 1
+
+    # Print for debugging purposes
+    print(scroll_timer)
+
+    # Draw the background images
+    SCREEN.blit(road_stretched1, (0, background_pos1))
+    SCREEN.blit(road_stretched2, (0, background_pos2))
+
+    # Rest of your game logic (drawing cars, handling collisions, etc.)
     # Handle events (like clicking the X button)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    # Update the display (not strictly necessary here, but good practice)
+
+    clock.tick(60)
+
+    # Update the display
     pygame.display.flip()
+
