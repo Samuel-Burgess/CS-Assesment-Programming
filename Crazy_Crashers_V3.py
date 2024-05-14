@@ -1,3 +1,5 @@
+"""Version 3 of Crazy Crasher game. Creating the car class."""
+
 import pygame
 import random
 import os
@@ -57,9 +59,27 @@ random_car_name = random.choice(list(car_images.keys()))
 scroll_timer = 0
 scroll_speed = 1
 
+
+class Car(pygame.sprite.Sprite):
+    """A class representing a car on the screen."""
+
+    def __init__(self, image, x, y):
+        super().__init__()
+        self.image = image
+        self.rect = self.image.get_rect(topleft=(x, y))
+
+    def draw(self, screen):
+        """Draws the car on the screen."""
+        screen.blit(self.image, self.rect)
+
+
+
+
 # Main game loop
 clock = pygame.time.Clock()
 running = True
+obstacle_cars = []
+
 while running:
     # Update background positions
     background_pos1 += scroll_speed  # Adjust for desired scrolling speed
@@ -85,7 +105,20 @@ while running:
     SCREEN.blit(road_stretched1, (0, background_pos1))
     SCREEN.blit(road_stretched2, (0, background_pos2))
 
+    # Add a new obstacle car with a random chance
+    if random.randint(1, 5) == 1:  # Adjust the probability of adding a new car
+        # Choose a random lane for the car
+        lane_pos = random.randint(0, SCREEN_WIDTH - car_images[random_car_name].get_width())
+        # Create a new obstacle car and add it to the list
+        new_car = Car(car_images[random.choice(list(car_images.keys()))], lane_pos, -SCREEN_HEIGHT)
+        obstacle_cars.append(new_car)
+        print("car made")
+
     # Rest of your game logic (drawing cars, handling collisions, etc.)
+    # Draw the obstacle cars
+    for car in obstacle_cars:
+        car.update()
+        car.draw(SCREEN)  # Call the draw method on each car
     # Handle events (like clicking the X button)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

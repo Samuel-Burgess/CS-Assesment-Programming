@@ -1,3 +1,5 @@
+"""Version 2 of the Crazy Crashers game. Created a scrolling background."""
+
 import pygame
 import random
 import os

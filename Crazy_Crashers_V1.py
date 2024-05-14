@@ -1,4 +1,5 @@
-"""Crazy Crashers game V1. Setting up game basis"""
+"""Crazy Crashers game V1. Setting up game basis,
+and creating a function to load all images from assets folder."""
 
 import pygame
 import random
