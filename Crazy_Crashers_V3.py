@@ -73,8 +73,6 @@ class Car(pygame.sprite.Sprite):
         screen.blit(self.image, self.rect)
 
 
-
-
 # Main game loop
 clock = pygame.time.Clock()
 running = True
