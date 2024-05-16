@@ -72,6 +72,18 @@ class Car(pygame.sprite.Sprite):
         """Draws the car on the screen."""
         screen.blit(self.image, self.rect)
 
+    def update(self):
+        """Updates the car's position on the screen."""
+        # Move the car down by the scroll speed
+        self.rect.y += scroll_speed
+
+        # Check if the car has gone off the screen
+        if self.rect.top > SCREEN_HEIGHT:
+            # Remove the car from the obstacle_cars list
+            obstacle_cars.remove(self)
+            # You may also want to remove the car object itself (optional)
+            # del self
+
 
 # Main game loop
 clock = pygame.time.Clock()
@@ -104,7 +116,7 @@ while running:
     SCREEN.blit(road_stretched2, (0, background_pos2))
 
     # Add a new obstacle car with a random chance
-    if random.randint(1, 5) == 1:  # Adjust the probability of adding a new car
+    if random.randint(1, 50) == 1:  # Adjust the probability of adding a new car
         # Choose a random lane for the car
         lane_pos = random.randint(0, SCREEN_WIDTH - car_images[random_car_name].get_width())
         # Create a new obstacle car and add it to the list
@@ -123,6 +135,7 @@ while running:
             running = False
 
     clock.tick(60)
+    print(clock.get_fps())
 
     # Update the display
     pygame.display.flip()
