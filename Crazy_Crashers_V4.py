@@ -1,9 +1,6 @@
-"""Version 3 of Crazy Crasher game. Creating the car class."""
-
 import pygame
 import random
 import os
-
 
 # Initialize pygame
 pygame.init()
@@ -28,17 +25,14 @@ def load_images(folder_path):
             # Get filename without extension
             name, _ = os.path.splitext(filename)
             # Load the image and add it to the dictionary
-            image = pygame.image.load(os.path.join(folder_path, filename)) \
-                .convert_alpha()
+            image = pygame.image.load(os.path.join(folder_path, filename)).convert_alpha()
             images[name] = image
     return images
 
 
 # Load all game assets
-road_image1 = pygame.image.load(os.path.join("assets", "road.png")) \
-    .convert_alpha()
-road_image2 = pygame.image.load(os.path.join("assets", "road.png")) \
-    .convert_alpha()
+road_image1 = pygame.image.load(os.path.join("assets", "road.png")).convert_alpha()
+road_image2 = pygame.image.load(os.path.join("assets", "road.png")).convert_alpha()
 assets_path_cars = os.path.join("assets", "cars")
 car_images = load_images(assets_path_cars)
 assets_path_bikes = os.path.join("assets", "bikes")
@@ -58,7 +52,14 @@ background_pos2 = -SCREEN_HEIGHT  # Start the second image offscreen
 random_car_name = random.choice(list(car_images.keys()))
 scroll_timer = 0
 scroll_speed = 1
+score = 0
+spawn_timer = 0
+spawn_interval = 100  # Adjust spawn interval
+max_cars_per_lane = 3  # Maximum cars per lane
 
+
+# Define x positions for the four lanes
+LANE_X_POSITIONS = [60, 98, 145, 180]
 
 class Car(pygame.sprite.Sprite):
     """A class representing a car on the screen."""
@@ -66,7 +67,7 @@ class Car(pygame.sprite.Sprite):
     def __init__(self, image, x, y):
         super().__init__()
         self.image = image
-        self.rect = self.image.get_rect(topleft=(x, y))
+        self.rect = self.image.get_rect(center=(x, y))
 
     def draw(self, screen):
         """Draws the car on the screen."""
@@ -78,11 +79,12 @@ class Car(pygame.sprite.Sprite):
         self.rect.y += scroll_speed
 
         # Check if the car has gone off the screen
+        global score
         if self.rect.top > SCREEN_HEIGHT:
             # Remove the car from the obstacle_cars list
             obstacle_cars.remove(self)
-            # You may also want to remove the car object itself (optional)
-            # del self
+            score += 1
+            print(score)
 
 
 # Main game loop
@@ -108,35 +110,41 @@ while running:
     if scroll_timer % 1000 == 0:
         scroll_speed += 1
 
-    # Print for debugging purposes
-    print(scroll_timer)
+    # Increment spawn timer
+    spawn_timer += 1
+
+    # Increase spawn rate as score increases
+    if spawn_timer >= spawn_interval - score // 10:  # Adjust the rate increase
+        spawn_timer = 0
+        # Shuffle the lane positions to randomize the order
+        random.shuffle(LANE_X_POSITIONS)
+        for lane_pos in LANE_X_POSITIONS:
+            # Count the number of cars in the current lane
+            cars_in_lane = sum(1 for car in obstacle_cars if car.rect.centerx == lane_pos)
+            # Spawn a new car if there are fewer than the maximum allowed cars in the lane and there's a chance to spawn
+            if cars_in_lane < max_cars_per_lane and random.random() < 0.85:  # Adjust the spawn chance
+                new_car = Car(car_images[random.choice(list(car_images.keys()))], lane_pos, -SCREEN_HEIGHT // 2)
+                obstacle_cars.append(new_car)
+                break  # Break the loop after spawning one car per attempt
 
     # Draw the background images
     SCREEN.blit(road_stretched1, (0, background_pos1))
     SCREEN.blit(road_stretched2, (0, background_pos2))
-
-    # Add a new obstacle car with a random chance
-    if random.randint(1, 50) == 1:  # Adjust the probability of adding a new car
-        # Choose a random lane for the car
-        lane_pos = random.randint(0, SCREEN_WIDTH - car_images[random_car_name].get_width())
-        # Create a new obstacle car and add it to the list
-        new_car = Car(car_images[random.choice(list(car_images.keys()))], lane_pos, -SCREEN_HEIGHT)
-        obstacle_cars.append(new_car)
-        print("car made")
 
     # Rest of your game logic (drawing cars, handling collisions, etc.)
     # Draw the obstacle cars
     for car in obstacle_cars:
         car.update()
         car.draw(SCREEN)  # Call the draw method on each car
+
     # Handle events (like clicking the X button)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
     clock.tick(60)
-    print(clock.get_fps())
 
     # Update the display
     pygame.display.flip()
 
+pygame.quit()
