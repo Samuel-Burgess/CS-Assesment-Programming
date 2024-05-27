@@ -61,6 +61,32 @@ max_cars_per_lane = 3  # Maximum cars per lane
 # Define x positions for the four lanes
 LANE_X_POSITIONS = [60, 98, 145, 180]
 
+
+class Player(pygame.sprite.Sprite):
+    """A class for the player car."""
+
+    def __init__(self, image, x, y):
+        super().__init__()
+        self.image = image
+        self.rect = self.image.get_rect(center=(x, y))
+        self.lane = 1  # Default lane is center lane
+
+    def draw(self, screen):
+        """Draws the car on the screen."""
+        screen.blit(self.image, self.rect)
+
+    def update(self, pressed_keys):
+        """Updates the car's position based on pressed keys."""
+        # Move the car left or right based on pressed keys
+        if pressed_keys[pygame.K_a] and self.lane > 0:
+            self.lane -= 1
+        if pressed_keys[pygame.K_d] and self.lane < len(LANE_X_POSITIONS) - 1:
+            self.lane += 1
+        # Update the car's x position based on its lane
+        self.rect.centerx = LANE_X_POSITIONS[self.lane]
+
+
+
 class Car(pygame.sprite.Sprite):
     """A class representing a car on the screen."""
 
@@ -91,6 +117,8 @@ class Car(pygame.sprite.Sprite):
 clock = pygame.time.Clock()
 running = True
 obstacle_cars = []
+player_car = Player(random.choice(list(car_images.keys())), 1, SCREEN_HEIGHT - 50)  # Choose a lane for the player
+
 
 while running:
     # Update background positions
@@ -135,7 +163,14 @@ while running:
     # Draw the obstacle cars
     for car in obstacle_cars:
         car.update()
-        car.draw(SCREEN)  # Call the draw method on each car
+        car.draw(SCREEN)
+
+    # Draw the player car
+    player_car.draw(SCREEN)
+
+    # Handle player input (use player_car.update(pressed_keys) )
+    pressed_keys = pygame.key.get_pressed()
+    player_car.update(pressed_keys)  # Update player car based on pressed keys
 
     # Handle events (like clicking the X button)
     for event in pygame.event.get():
@@ -148,3 +183,4 @@ while running:
     pygame.display.flip()
 
 pygame.quit()
+
