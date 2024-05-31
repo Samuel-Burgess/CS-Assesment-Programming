@@ -78,13 +78,13 @@ class Player(pygame.sprite.Sprite):
         """Sets the car's position based on its current lane."""
         print(self.lane)
         if self.lane == 0:
-            self.rect.centerx = LANE_X_POSITIONS[0]
+            self.rect.centerx = 60
         elif self.lane == 1:
-            self.rect.centerx = LANE_X_POSITIONS[1]
-        elif self.lane == 1:
-            self.rect.centerx = LANE_X_POSITIONS[2]
-        elif self.lane == 1:
-            self.rect.centerx = LANE_X_POSITIONS[3]
+            self.rect.centerx = 98
+        elif self.lane == 2:
+            self.rect.centerx = 145
+        elif self.lane == 3:
+            self.rect.centerx = 180
         print(self.rect.centerx)
 
     def move_left(self):
@@ -92,7 +92,6 @@ class Player(pygame.sprite.Sprite):
         print(self.lane)
         if self.lane > 0:
             self.lane -= 1
-            self.set_lane_position()
             print(self.lane)
 
     def move_right(self):
@@ -100,7 +99,6 @@ class Player(pygame.sprite.Sprite):
         print(self.lane)
         if self.lane < 3:
             self.lane += 1
-            self.set_lane_position()
             print(self.lane)
 
 
