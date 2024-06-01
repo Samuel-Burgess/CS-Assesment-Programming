@@ -169,7 +169,7 @@ while running:
         spawn_timer += 1
 
         # Increase spawn rate as score increases
-        if spawn_timer >= (spawn_interval - (scroll_speed * 25)):  # Adjust the rate increase
+        if (spawn_interval - (scroll_speed * 25)) <= spawn_timer >= 5:  # Adjust the rate increase
             spawn_timer = 0
             # Ensure not all lanes are blocked
             lanes_with_cars = [car.rect.centerx for car in obstacle_cars]
