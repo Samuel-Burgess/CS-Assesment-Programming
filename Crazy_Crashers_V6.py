@@ -20,7 +20,9 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
 # Font for displaying text
-font = pygame.font.Font(None, 20)
+font_title = pygame.font.Font(None, 40)
+font_subtitle = pygame.font.Font(None, 30)
+font_text = pygame.font.Font(None, 20)
 
 # High score file
 HIGH_SCORE_FILE = "high_score.txt"
@@ -55,30 +57,25 @@ def save_high_score(score):
 
 
 # Load all game assets
+cover_art = pygame.image.load(os.path.join("assets", "cover_art.jpg")).convert_alpha()
+cover_art_stretched = pygame.transform.scale(cover_art, (SCREEN_WIDTH, SCREEN_HEIGHT))
+crash_art = pygame.image.load(os.path.join("assets", "crash_art.jpg")).convert_alpha()
+crash_art_stretched = pygame.transform.scale(crash_art, (SCREEN_WIDTH, SCREEN_HEIGHT))
 road_image1 = pygame.image.load(os.path.join("assets", "road.png")).convert_alpha()
 road_image2 = pygame.image.load(os.path.join("assets", "road.png")).convert_alpha()
 assets_path_cars = os.path.join("assets", "cars")
 car_images = load_images(assets_path_cars)
-assets_path_bikes = os.path.join("assets", "bikes")
-bike_images = load_images(assets_path_bikes)
-assets_path_trucks = os.path.join("assets", "trucks")
-truck_images = load_images(assets_path_trucks)
-
-# Stretch the road image to fit the screen
 road_stretched1 = pygame.transform.scale(road_image1, (SCREEN_WIDTH, SCREEN_HEIGHT))
 road_stretched2 = pygame.transform.scale(road_image2, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-# Define variables for background positions
+# Initialize gameplay variables
 background_pos1 = 0
-background_pos2 = -SCREEN_HEIGHT  # Start the second image offscreen
-
+background_pos2 = -SCREEN_HEIGHT
 scroll_speed = 2
 score = 0
 high_score = load_high_score()
 spawn_timer = 0
-spawn_interval = 150  # Adjust spawn interval
-
-# Define x positions for the four lanes
+spawn_interval = 175
 LANE_X_POSITIONS = [60, 98, 145, 180]
 
 
@@ -174,9 +171,11 @@ def start_menu():
     """Displays the start menu."""
     while True:
         SCREEN.fill(WHITE)
-        draw_text("Crazy Crashers", font, BLACK, SCREEN, 50, 100)
-        draw_text("Press any key to start", font, BLACK, SCREEN, 30, 200)
-        draw_text("Use 'A' and 'D' or the left and right arrows move", font, BLACK, SCREEN, 30, 250)
+        SCREEN.blit(cover_art_stretched, (0, 0))
+        draw_text("Crazy Crashers", font_title, BLACK, SCREEN, 15, 0)
+        draw_text("Press any key to start", font_subtitle, WHITE, SCREEN, 15, 140)
+        draw_text("Use 'A' and 'D' or", font_text, WHITE, SCREEN, 60, 95)
+        draw_text("the left and right arrows move", font_text, WHITE, SCREEN, 30, 110)
         pygame.display.flip()
 
         for event in pygame.event.get():
@@ -191,10 +190,12 @@ def game_over_menu(score, high_score):
     """Displays the game over menu."""
     while True:
         SCREEN.fill(WHITE)
-        draw_text(f"Game Over!", font, BLACK, SCREEN, 60, 100)
-        draw_text(f"Score: {score}", font, BLACK, SCREEN, 60, 150)
-        draw_text(f"High Score: {high_score}", font, BLACK, SCREEN, 60, 200)
-        draw_text("Press R to restart or Q to quit", font, BLACK, SCREEN, 20, 250)
+        SCREEN.blit(crash_art_stretched, (0,0))
+        draw_text(f"Game Over!", font_title, WHITE, SCREEN, 40, 0)
+        draw_text(f"Score: {score}", font_title, WHITE, SCREEN, 60, 80)
+        draw_text(f"High Score: {high_score}", font_subtitle, WHITE, SCREEN, 45, 120)
+        draw_text("Press R to restart", font_subtitle, WHITE, SCREEN, 40, 350)
+        draw_text("or Q to quit", font_subtitle, WHITE, SCREEN, 70, 370)
         pygame.display.flip()
 
         for event in pygame.event.get():
@@ -213,7 +214,7 @@ clock = pygame.time.Clock()
 running = True
 game_over = False
 obstacle_cars = []
-player_car = Player(random.choice(list(car_images.values())), LANE_X_POSITIONS[1], SCREEN_HEIGHT - 50)
+player_car = Player(car_images["car_18"], LANE_X_POSITIONS[1], SCREEN_HEIGHT - 50)
 
 # Show start menu
 if not start_menu():
@@ -237,20 +238,15 @@ while running:
 
     if not game_over:
         # Update background positions
-        background_pos1 += scroll_speed  # Adjust for desired scrolling speed
+        background_pos1 += scroll_speed
         background_pos2 += scroll_speed
-        # Check if the first image needs to reset
         if background_pos1 >= SCREEN_HEIGHT:
             background_pos1 = -SCREEN_HEIGHT
-
-        # Check if the second image needs to reset
         if background_pos2 >= SCREEN_HEIGHT:
             background_pos2 = -SCREEN_HEIGHT
 
         # Increment spawn timer
         spawn_timer += 1
-
-        # Increase spawn rate as score increases
         if (spawn_interval - (scroll_speed * 15)) <= spawn_timer >= 15:  # Adjust the rate increase
             spawn_timer = 0
             # Ensure not all lanes are blocked
@@ -270,18 +266,14 @@ while running:
         # Draw the background images
         SCREEN.blit(road_stretched1, (0, background_pos1))
         SCREEN.blit(road_stretched2, (0, background_pos2))
-
-        # Draw the player car
+        # Draw Cars
         player_car.set_lane_position()
         player_car.draw(SCREEN)
-
-        # Draw the obstacle cars
         for car in obstacle_cars:
             car.update()
             car.draw(SCREEN)
-
         # Draw the score
-        draw_text(f"Score: {score}", font, BLACK, SCREEN, 10, 10)
+        draw_text(f"Score: {score}", font_text, BLACK, SCREEN, 10, 10)
 
         # Check for collisions
         if check_collision(player_car, obstacle_cars):
@@ -294,12 +286,14 @@ while running:
     else:
         if not game_over_menu(score, high_score):
             running = False
+            pygame.quit()
+            quit()
         else:
             game_over = False
             scroll_speed = 2
             score = 0
             obstacle_cars.clear()
-            player_car = Player(random.choice(list(car_images.values())), LANE_X_POSITIONS[1], SCREEN_HEIGHT - 50)
+            player_car = Player(car_images["car_18"], LANE_X_POSITIONS[1], SCREEN_HEIGHT - 50)
             spawn_timer = 0
 
     clock.tick(60)
