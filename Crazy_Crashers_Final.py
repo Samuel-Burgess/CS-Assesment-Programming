@@ -1,4 +1,4 @@
-"""Crazy Crashers V9. Nearly Finished."""
+"""Crazy Crashers game."""
 
 import pygame
 import random
@@ -220,8 +220,6 @@ def spawn_cars():
     if (spawn_interval - (scroll_speed * 10)) <= spawn_timer >= 15:
         spawn_timer = 0
         random_lanes_spawn = random.randint(1, 100)
-        print("spawn attempt")
-        print(random_lanes_spawn)
         if random_lanes_spawn < 25:
             new_car = Car(car_images[random.choice(list(car_images.keys()))],
                           random.choice(LANE_X_POSITIONS),
