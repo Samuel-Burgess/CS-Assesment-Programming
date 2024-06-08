@@ -40,10 +40,7 @@ road_image = pygame.image.load(os.path.join("assets", "road.png")) \
     .convert_alpha()
 assets_path_cars = os.path.join("assets", "cars")
 car_images = load_images(assets_path_cars)
-assets_path_bikes = os.path.join("assets", "bikes")
-bike_images = load_images(assets_path_bikes)
-assets_path_trucks = os.path.join("assets", "trucks")
-truck_images = load_images(assets_path_trucks)
+
 
 # Fill the screen with white color
 SCREEN.fill((255, 255, 255))  # White color in RGB format

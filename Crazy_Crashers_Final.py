@@ -51,37 +51,6 @@ def save_high_score(score_input):
         file.write(str(score_input))
 
 
-# Load all game assets
-cover_art = (pygame.image.load
-             (os.path.join("assets", "cover_art.jpg")).convert_alpha())
-cover_art_stretched = (pygame.transform.scale
-                       (cover_art, (SCREEN_WIDTH, SCREEN_HEIGHT)))
-crash_art = (pygame.image.load
-             (os.path.join("assets", "crash_art.jpg")).convert_alpha())
-crash_art_stretched = (pygame.transform.scale
-                       (crash_art, (SCREEN_WIDTH, SCREEN_HEIGHT)))
-road_image1 = (pygame.image.load
-               (os.path.join("assets", "road.png")).convert_alpha())
-road_image2 = (pygame.image.load
-               (os.path.join("assets", "road.png")).convert_alpha())
-assets_path_cars = os.path.join("assets", "cars")
-car_images = load_images(assets_path_cars)
-road_stretched1 = (pygame.transform.scale
-                   (road_image1, (SCREEN_WIDTH, SCREEN_HEIGHT)))
-road_stretched2 = (pygame.transform.scale
-                   (road_image2, (SCREEN_WIDTH, SCREEN_HEIGHT)))
-
-# Initialize gameplay variables
-background_pos1 = 0
-background_pos2 = -SCREEN_HEIGHT
-scroll_speed = 3
-score = 0
-high_score = load_high_score()
-spawn_timer = 0
-spawn_interval = 175
-LANE_X_POSITIONS = [60, 98, 145, 180]
-
-
 class Player(pygame.sprite.Sprite):
     """Class for the player character"""
     def __init__(self, image, x, y):
@@ -261,7 +230,35 @@ def spawn_cars():
             obstacle_cars.append(new_car)
 
 
-# Main game loop
+# Load all game assets
+cover_art = (pygame.image.load
+             (os.path.join("assets", "cover_art.jpg")).convert_alpha())
+cover_art_stretched = (pygame.transform.scale
+                       (cover_art, (SCREEN_WIDTH, SCREEN_HEIGHT)))
+crash_art = (pygame.image.load
+             (os.path.join("assets", "crash_art.jpg")).convert_alpha())
+crash_art_stretched = (pygame.transform.scale
+                       (crash_art, (SCREEN_WIDTH, SCREEN_HEIGHT)))
+road_image1 = (pygame.image.load
+               (os.path.join("assets", "road.png")).convert_alpha())
+road_image2 = (pygame.image.load
+               (os.path.join("assets", "road.png")).convert_alpha())
+assets_path_cars = os.path.join("assets", "cars")
+car_images = load_images(assets_path_cars)
+road_stretched1 = (pygame.transform.scale
+                   (road_image1, (SCREEN_WIDTH, SCREEN_HEIGHT)))
+road_stretched2 = (pygame.transform.scale
+                   (road_image2, (SCREEN_WIDTH, SCREEN_HEIGHT)))
+
+# Initialize gameplay variables
+background_pos1 = 0
+background_pos2 = -SCREEN_HEIGHT
+scroll_speed = 3
+score = 0
+high_score = load_high_score()
+spawn_timer = 0
+spawn_interval = 175
+LANE_X_POSITIONS = [60, 98, 145, 180]
 clock = pygame.time.Clock()
 running = True
 game_over = False
@@ -269,6 +266,7 @@ obstacle_cars = []
 player_car = Player(car_images["car_18"],
                     LANE_X_POSITIONS[1], SCREEN_HEIGHT - 50)
 
+# Main game loop
 # Show start menu
 if not start_menu():
     running = False
@@ -297,7 +295,6 @@ while running:
             background_pos2 = -SCREEN_HEIGHT
         # Do car spawning
         spawn_cars()
-
         # Draw all backgrounds and game sprites
         SCREEN.blit(road_stretched1, (0, background_pos1))
         SCREEN.blit(road_stretched2, (0, background_pos2))
