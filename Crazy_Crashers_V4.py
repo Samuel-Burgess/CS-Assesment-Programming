@@ -1,3 +1,4 @@
+"""adjusting the car class. V4"""
 import pygame
 import random
 import os

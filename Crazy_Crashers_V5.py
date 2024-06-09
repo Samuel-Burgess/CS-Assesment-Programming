@@ -1,3 +1,4 @@
+"""Lots of balancing. crazy crashers v5"""
 import pygame
 import random
 import os

@@ -1,3 +1,4 @@
+"""Even more balancing and tidying up"""
 import pygame
 import random
 import os

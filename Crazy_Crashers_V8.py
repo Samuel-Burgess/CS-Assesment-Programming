@@ -1,4 +1,4 @@
-"""Crazy Crashers V9. Nearly Finished."""
+"""Crazy Crashers V8. Nearly Finished."""
 
 import pygame
 import random

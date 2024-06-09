@@ -1,3 +1,4 @@
+"""Crazy crashers V7 trying to get spawning normal"""
 import pygame
 import random
 import os

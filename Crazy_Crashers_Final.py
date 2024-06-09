@@ -20,6 +20,8 @@ font_subtitle = pygame.font.Font(None, 30)
 font_text = pygame.font.Font(None, 20)
 # High score file
 HIGH_SCORE_FILE = "high_score.txt"
+SPAWN_MULTIPLIER = 10
+SPAWN_LIMIT = 15
 
 
 def load_images(folder_path):
@@ -186,7 +188,8 @@ def spawn_cars():
     global spawn_timer
     # Increment spawn timer
     spawn_timer += 1
-    if (spawn_interval - (scroll_speed * 10)) <= spawn_timer >= 15:
+    if ((SPAWN_INTERVAL - (scroll_speed * SPAWN_MULTIPLIER)) <=
+            spawn_timer >= SPAWN_LIMIT):
         spawn_timer = 0
         random_lanes_spawn = random.randint(1, 100)
         if random_lanes_spawn < 25:
@@ -257,7 +260,7 @@ scroll_speed = 3
 score = 0
 high_score = load_high_score()
 spawn_timer = 0
-spawn_interval = 175
+SPAWN_INTERVAL = 175
 LANE_X_POSITIONS = [60, 98, 145, 180]
 clock = pygame.time.Clock()
 running = True
